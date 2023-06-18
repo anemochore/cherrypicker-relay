@@ -39,7 +39,7 @@ async function run(e) {
   const db = new SQL.Database(uint8Content);  //should be Uint8Array
 
   //query it
-  const headers = ['cname', 'cno', 'ymd', 'time', 'paid', 'balance', 'store'];
+  const header = ['cname', 'cno', 'ymd', 'time', 'paid', 'balance', 'store'];
   const where = `cname = '하나' AND cno = '187-******-09107'`  //hard-coded
   const QUERY = `SELECT ${headers.join(',')} FROM 'TABLE_RECEIPT' WHERE ${where} ORDER BY ymd DESC`;
   const content = db.exec(QUERY);
