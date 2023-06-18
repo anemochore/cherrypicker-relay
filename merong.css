@@ -3,7 +3,7 @@ body { font-size: 0.95em; padding: 10px; font-family: sans-serif; }
 
 #log { font-size: 0.85em; padding-top: 5px; color: gray; }
 
-#output {
+#content {
   background-repeat: no-repeat;
   min-height: 128px;
 }
