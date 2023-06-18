@@ -91,12 +91,13 @@ async function loadSql(url) {
 //gapi boilerplates
 const CLIENT_ID = '484499455751-m0ck74mc8lkiffj3t6o7p7sk08jerlsk.apps.googleusercontent.com';
 const API_KEY = 'AIzaSyAwh4ElKmAhfmTBmdimD9vPAuGws6chirg';
-const SCOPE = 'http://www.googleapis.com/auth/drive.readonly';
+const SCOPES = 'http://www.googleapis.com/auth/drive.readonly';
 const DISCOVERY_DOC = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
+let onetapInited = false;
 
 document.getElementById('authorize_button').style.visibility = 'hidden';
 document.getElementById('signout_button').style.visibility = 'hidden';
@@ -126,21 +127,11 @@ async function initializeGapiClient() {
  * Callback after Google Identity Services are loaded.
  */
 function gisLoaded() {
-  /*
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
     callback: '', // defined later
   });
-  */
-
-  //from google one log-in example
-  google.accounts.id.initialize({
-    client_id: CLIENT_ID,
-    callback: '',
-  });
-  google.accounts.id.prompt();
-  
   gisInited = true;
   maybeEnableButtons();
 }
