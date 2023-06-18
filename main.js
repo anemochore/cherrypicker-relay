@@ -36,7 +36,7 @@ async function run(e) {
   OUTPUT.style.removeProperty('background-image');
   OUTPUT.innerText = '';
 
-  const rows = temp1[0].values
+  const rows = content[0].values;
   const styleObj = {
     paid: numberWithCommas,
     balance: numberWithCommas,
@@ -101,7 +101,7 @@ function makeTable(header, rows, target = document.body, replaceHeader = {}, sty
         td.textContent = styleObj[header[i]](item);
       else
         td.textContent = item;
-      console.log(td);
+      //console.log(td);
       newRow.appendChild(td);
     });
     newTable.appendChild(newRow);
