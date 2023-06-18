@@ -1,0 +1,9 @@
+h1 { font-size: 1.2em; margin: 0; padding-bottom: 8px; }
+body { font-size: 0.95em; padding: 10px; font-family: sans-serif; }
+hr { clear: both; }
+
+#update-button { color: white; background-color: #4CAF50; border: 0; margin: 4px; padding: 8px; }
+
+#content { float: left; width: 320px; padding-bottom: 10px; }
+
+#log { font-size: 0.85em; padding-top: 5px; color: gray; }
