@@ -92,7 +92,7 @@ async function loadSql(url) {
 const CLIENT_ID = '484499455751-m0ck74mc8lkiffj3t6o7p7sk08jerlsk.apps.googleusercontent.com';
 const API_KEY = 'AIzaSyAwh4ElKmAhfmTBmdimD9vPAuGws6chirg';
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
-const SCOPES = 'http://www.googleapis.com/auth/drive.readonly';
+const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
 
 let tokenClient;
 let gapiInited = false;
