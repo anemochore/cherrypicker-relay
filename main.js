@@ -1,29 +1,16 @@
 //globals
-const HTML_CONSOLE = document.getElementById('log');
 const META = document.getElementById('meta');
 const OUTPUT = document.getElementById('content');
 
-console.log2 = (...args) => {
-   const t = [...args].join('\n');
-  if(t == '')
-    HTML_CONSOLE.innerText = 'log cleared.';
-  else {
-    HTML_CONSOLE.innerText = t;
-    console.log(...args);
-  }
-}
-
-
 async function run(e) {
   //init
-  console.log2('기다리라우...');
   OUTPUT.style.backgroundImage = 'url("spinner.gif")';
   OUTPUT.innerText = 'loading...';
 
   //get the latest file
   const [id, createdTime] = await getLatestFile();
   if(!id) {
-    console.log2('구글 드라이브 폴더에서 파일을 읽을 수 없습니다. :(');
+    windows.alert('구글 드라이브에서 파일을 읽을 수 없습니다. :(');
     return;
   }
   META.innerText = new Date(createdTime).toLocaleString() + ' 백업 파일 기준';
@@ -43,12 +30,13 @@ async function run(e) {
   const where = `cname = '하나' AND cno = '187-******-09107'`  //hard-coded
   const QUERY = `SELECT ${header.join(',')} FROM 'TABLE_RECEIPT' WHERE ${where} ORDER BY ymd DESC`;
   const content = db.exec(QUERY);
-  console.log(content);
+  //console.log(content);
 
   //make a table
   OUTPUT.style.removeProperty('background-image');
   OUTPUT.innerText = '';
 
+  const rows = temp1[0].values
   const styleObj = {
     paid: numberWithCommas,
     balance: numberWithCommas,
@@ -62,7 +50,7 @@ async function run(e) {
     balance: '잔액',
     store: '적요',
   };
-  makeTable(header, content, OUTPUT, replaceHeader, styleObj);
+  makeTable(header, rows, OUTPUT, replaceHeader, styleObj);
 }
 
 
@@ -84,6 +72,7 @@ async function getUint8(id) {
     alt: 'media',
   });
 
+  //https://stackoverflow.com/a/63818644/6153990
   const charArray = new Array(resp.body.length);
   for (let i = 0; i < resp.body.length; i++) {
     charArray[i] = resp.body.charCodeAt(i);
@@ -92,12 +81,12 @@ async function getUint8(id) {
 }
 
 
-//util
+//utils
 function makeTable(header, rows, target = document.body, replaceHeader = {}, styleObj = {}) {
   //https://stackoverflow.com/a/76501271/6153990
   const newTable = document.createElement("table");
   const thead = document.createElement("thead");
-  for(item of headers) {
+  for(item of header) {
     const th = document.createElement("th");
     th.textContent = replaceHeader[item] || item;
     thead.appendChild(th);
@@ -106,14 +95,15 @@ function makeTable(header, rows, target = document.body, replaceHeader = {}, sty
 
   for(row of rows) {
     const newRow = document.createElement("tr");
-    for(header of headers) {
+    row.forEach((item, i) => {
       const td = document.createElement("td");
-      if(styleObj[header])
-        td.textContent = styleObj[header](row[header]);
+      if(styleObj[header[i]])
+        td.textContent = styleObj[header[i]](item);
       else
-        td.textContent = row[header];
+        td.textContent = item;
+      console.log(td);
       newRow.appendChild(td);
-    }
+    });
     newTable.appendChild(newRow);
   }
 
@@ -122,7 +112,7 @@ function makeTable(header, rows, target = document.body, replaceHeader = {}, sty
 
 function numberWithCommas(x) {
   //https://stackoverflow.com/a/2901298/6153990
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 
@@ -191,7 +181,7 @@ function handleAuthClick() {
       throw (resp);
     }
     document.getElementById('signout_button').style.visibility = 'visible';
-    document.getElementById('authorize_button').innerText = '다시 로그인';
+    document.getElementById('authorize_button').innerText = '새로고침';
     await run();
   };
 
