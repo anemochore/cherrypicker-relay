@@ -33,6 +33,7 @@ async function run(e) {
     console.log2('구글 드라이브 폴더에서 파일을 읽을 수 없습니다. :(');
     return;
   }
+  OUTPUT.innerText = '';
   META.innerText = new Date(createdTime).toLocaleString() + ' 백업 파일 기준';
 
   //load it
@@ -43,13 +44,31 @@ async function run(e) {
   const db = new SQL.Database(buf);
 
   //query it
-  const QUERY = `SELECT cname,cno,ymd,time,paid,balance,store FROM 'TABLE_RECEIPT' WHERE cname = '하나' AND cno = '187-******-09107' ORDER BY ymd DESC`;
+  const headers = ['cname', 'cno', 'ymd', 'time', 'paid', 'balance', 'store'];
+  const where = `cname = '하나' AND cno = '187-******-09107'`  //hard-coded
+  const QUERY = `SELECT ${headers.join(',')} FROM 'TABLE_RECEIPT' WHERE ${where} ORDER BY ymd DESC`;
   const content = db.exec(QUERY);
   console.log(content);
 
-  
+  //make a table
+  const styleObj = {
+    paid: numberWithCommas,
+    balance: numberWithCommas,
+  };
+  const replaceHeader = {
+    cname: '카드/계좌',
+    cno: '계좌번호',
+    ymd: '날짜',
+    time: '시간',
+    paid: '금액',
+    balance: '잔액',
+    store: '적요',
+  };
+  makeTable(headers, content, OUTPUT, replaceHeader, styleObj);
 }
 
+
+//gapi funcs
 async function getLatestFile() {
   const resp = await gapi.client.drive.files.list({
     pageSize: 10,
@@ -67,6 +86,40 @@ async function getContent(id) {
     alt: 'media',
   });
   return resp.body;
+}
+
+
+//util
+function makeTable(header, rows, target = document.body, replaceHeader = {}, styleObj = {}) {
+  //https://stackoverflow.com/a/76501271/6153990
+  const newTable = document.createElement("table");
+  const thead = document.createElement("thead");
+  for(item of headers) {
+    const th = document.createElement("th");
+    th.textContent = replaceHeader[item] || item;
+    thead.appendChild(th);
+  }
+  newTable.appendChild(thead);
+
+  for(row of rows) {
+    const newRow = document.createElement("tr");
+    for(header of headers) {
+      const td = document.createElement("td");
+      if(styleObj[header])
+        td.textContent = styleObj[header](row[header]);
+      else
+        td.textContent = row[header];
+      newRow.appendChild(td);
+    }
+    newTable.appendChild(newRow);
+  }
+
+  return target.appendChild(newTable);
+}
+
+function numberWithCommas(x) {
+  //https://stackoverflow.com/a/2901298/6153990
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 
