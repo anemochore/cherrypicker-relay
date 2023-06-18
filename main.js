@@ -20,13 +20,14 @@ const SQL = initSqlJs({
 
 async function run(e) {
   //init
-  console.log('기다리라우...');
+  console.log2('기다리라우...');
   const output = document.getElementById('output');
   output.style.backgroundImage = 'url("spinner.gif")';
   output.alt = 'loading...';
 
   //get folder
-  const folder = getFolder();
+  //const folder = await getFolder();
+  folder = {id: '1ZB7TC1sYyYOCUaeIFiXJpb5fCLJeirf7'};  //dev
   if(!folder.id) {
     console.log2('구글 드라이브에서 폴더를 읽을 수 없습니다. :(', folder);
     //todo: 폴더를 수동으로 고르게 해주자??
@@ -34,16 +35,19 @@ async function run(e) {
   }
 
   //get the latest file
-  const file = getLatestFile(folder);
+  /*
+  const file = await getLatestFile(folder.id);
   if(!file.id) {
     console.log2('구글 드라이브 폴더에서 파일을 읽을 수 없습니다. :(', folder);
     //todo: 폴더를 수동으로 고르게 해주자??
     return;
   }
+  */
 
   //load it
-  //const url = getUrl(file.id);
-  url = 'https://github.com/lerocha/chinook-database/raw/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite';  //dev
+  file = {id: '1AeLjyBb6pExwYcvVRsIRz8gC7l7FrqxZ'};  //dev
+  const url = getUrl(file.id);
+  //url = 'https://github.com/lerocha/chinook-database/raw/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite';  //dev
   const db = loadSql(url);
 
   //query it
@@ -53,13 +57,16 @@ async function run(e) {
   //
 }
 
-function getLatestFile(folder) {
+
+async function getFolder() {
   return;
 }
 
-function getUrl(id) {
-  id = '1AeLjyBb6pExwYcvVRsIRz8gC7l7FrqxZ';  //dev
+async function getLatestFile(folder) {
+  return;
+}
 
+async function getUrl(id) {
   //https://stackoverflow.com/a/39408884/6153990
   gapi.client.drive.files.get({
     fileId: id,
@@ -82,50 +89,8 @@ async function loadSql(url) {
 
 
 //gapi boilerplates
-var authorizeButton = document.getElementById('authorize-button');
-var signoutButton = document.getElementById('signout-button');
-
-function handleClientLoad() {
-  gapi.load('client:auth2', initClient);
-}
-
-function initClient() {
-  const API_KEY = 'AIzaSyAwh4ElKmAhfmTBmdimD9vPAuGws6chirg';
-  const CLIENT_ID = '484499455751-m0ck74mc8lkiffj3t6o7p7sk08jerlsk.apps.googleusercontent.com';
-  const SCOPE = 'http://www.googleapis.com/auth/drive.readonly';
-  const D_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
-
-  gapi.client.init({
-    'apiKey': API_KEY,
-    'clientId': CLIENT_ID,
-    'scope': SCOPE,
-    'discoveryDocs': D_DOCS,
-  }).then(function() {
-    gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-
-    updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-    authorizeButton.onclick = handleAuthClick;
-    signoutButton.onclick = handleSignoutClick;
-  });
-}
-
-function updateSigninStatus(isSignedIn) {
-  if(isSignedIn) {
-    authorizeButton.style.display = 'none';
-    signoutButton.style.display = 'block';
-    UPDATE_DIV.style.display = 'block';
-    updatedRun();
-  } else {
-    authorizeButton.style.display = 'block';
-    signoutButton.style.display = 'none';
-    UPDATE_DIV.style.display = 'none';
-  }
-}
-
-function handleAuthClick(event) {
-  gapi.auth2.getAuthInstance().signIn();
-}
-
-function handleSignoutClick(event) {
-  gapi.auth2.getAuthInstance().signOut();
-}
+google.accounts.id.initialize({
+  client_id: '484499455751-m0ck74mc8lkiffj3t6o7p7sk08jerlsk.apps.googleusercontent.com',
+  callback: run
+});
+google.accounts.id.prompt();

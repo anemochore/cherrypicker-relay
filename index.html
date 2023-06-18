@@ -9,10 +9,8 @@
   <script src="dist/sql-wasm.js"></script>
   <body>
     <h1>cherrypicker relay</h1>
-    <button id="authorize-button" style="display: none;">구글 로그인</button>
-    <button id="signout-button" style="display: none;">로그아웃</button>
     <hr>
-    <button id="update-button" onclick="run()">업데이트</button>
+    <button id="update-button" onclick="run()" disabled>업데이트</button>
 
     <div id = "log">
       log here
@@ -26,7 +24,7 @@
       output here
     </div>
 
+    <script src="https://accounts.google.com/gsi/client"></script>
     <script src="main.js"></script>
-    <script src="https://apis.google.com/js/api.js"></script>
   </body>
 </html>
