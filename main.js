@@ -13,12 +13,6 @@ console.log2 = (...args) => {
   }
 }
 
-//load sql.js (await is omitted...)
-const SQL = initSqlJs({
-  //locateFile: file => `https://sql.js.org/dist/${file}`
-  locateFile: file => `dist/${file}`
-});
-
 
 async function run(e) {
   //init
@@ -41,6 +35,10 @@ async function run(e) {
   const buf = buffer.Buffer.from(fileContent, "hex").buffer;  //ArrayBuffer (noy Uint8Array)
 
   //load sql
+  const SQL = await initSqlJs({
+    //locateFile: file => `https://sql.js.org/dist/${file}`
+    locateFile: file => `dist/${file}`
+  });
   const db = new SQL.Database(buf);
 
   //query it
