@@ -41,7 +41,7 @@ async function run(e) {
   //query it
   const header = ['cname', 'cno', 'ymd', 'time', 'paid', 'balance', 'store'];
   const where = `cname = '하나' AND cno = '187-******-09107'`  //hard-coded
-  const QUERY = `SELECT ${headers.join(',')} FROM 'TABLE_RECEIPT' WHERE ${where} ORDER BY ymd DESC`;
+  const QUERY = `SELECT ${header.join(',')} FROM 'TABLE_RECEIPT' WHERE ${where} ORDER BY ymd DESC`;
   const content = db.exec(QUERY);
   console.log(content);
 
@@ -62,7 +62,7 @@ async function run(e) {
     balance: '잔액',
     store: '적요',
   };
-  makeTable(headers, content, OUTPUT, replaceHeader, styleObj);
+  makeTable(header, content, OUTPUT, replaceHeader, styleObj);
 }
 
 
