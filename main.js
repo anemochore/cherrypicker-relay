@@ -18,28 +18,25 @@ async function run(e) {
   //init
   console.log2('기다리라우...');
   OUTPUT.style.backgroundImage = 'url("spinner.gif")';
-  OUTPUT.alt = 'loading...';
+  OUTPUT.innerText = 'loading...';
 
   //get the latest file
   const [id, createdTime] = await getLatestFile();
-  OUTPUT.style.removeProperty('background-image');
   if(!id) {
     console.log2('구글 드라이브 폴더에서 파일을 읽을 수 없습니다. :(');
     return;
   }
-  OUTPUT.innerText = '';
   META.innerText = new Date(createdTime).toLocaleString() + ' 백업 파일 기준';
 
   //load it
-  const fileContent = await getContent(id);  //text of body
-  const buf = buffer.Buffer.from(fileContent, "hex").buffer;  //ArrayBuffer (noy Uint8Array)
+  const uint8Content = await getUint8(id);
 
   //load sql
   const SQL = await initSqlJs({
     //locateFile: file => `https://sql.js.org/dist/${file}`
     locateFile: file => `dist/${file}`
   });
-  const db = new SQL.Database(buf);
+  const db = new SQL.Database(uint8Content);  //should be Uint8Array
 
   //query it
   const headers = ['cname', 'cno', 'ymd', 'time', 'paid', 'balance', 'store'];
@@ -49,6 +46,9 @@ async function run(e) {
   console.log(content);
 
   //make a table
+  OUTPUT.style.removeProperty('background-image');
+  OUTPUT.innerText = '';
+
   const styleObj = {
     paid: numberWithCommas,
     balance: numberWithCommas,
@@ -78,12 +78,17 @@ async function getLatestFile() {
   return [files[0]?.id, files[0]?.createdTime];
 }
 
-async function getContent(id) {
+async function getUint8(id) {
   const resp = await gapi.client.drive.files.get({
     fileId: id,
     alt: 'media',
   });
-  return resp.body;
+
+  const charArray = new Array(resp.body.length);
+  for (let i = 0; i < resp.body.length; i++) {
+    charArray[i] = resp.body.charCodeAt(i);
+  }
+  return new Uint8Array(charArray);
 }
 
 
