@@ -1,5 +1,8 @@
-//log singleton
+//globals
 const HTML_CONSOLE = document.getElementById('log');
+const META = document.getElementById('meta');
+const OUTPUT = document.getElementById('content');
+
 console.log2 = (...args) => {
    const t = [...args].join('\n');
   if(t == '')
@@ -10,9 +13,8 @@ console.log2 = (...args) => {
   }
 }
 
-//load sql.js
-//const initSqlJs = window.initSqlJs;
-const SQL = await initSqlJs({
+//load sql.js (await is omitted...)
+const SQL = initSqlJs({
   //locateFile: file => `https://sql.js.org/dist/${file}`
   locateFile: file => `dist/${file}`
 });
@@ -21,33 +23,21 @@ const SQL = await initSqlJs({
 async function run(e) {
   //init
   console.log2('기다리라우...');
-  const output = document.getElementById('content');
-  output.style.backgroundImage = 'url("spinner.gif")';
-  output.alt = 'loading...';
-
-  //get folder
-  //const folder = await getFolder();
-  folder = {id: '1ZB7TC1sYyYOCUaeIFiXJpb5fCLJeirf7'};  //dev
-  if(!folder.id) {
-    console.log2('구글 드라이브에서 폴더를 읽을 수 없습니다. :(', folder);
-    //todo: 폴더를 수동으로 고르게 해주자??
-    return;
-  }
+  OUTPUT.style.backgroundImage = 'url("spinner.gif")';
+  OUTPUT.alt = 'loading...';
 
   //get the latest file
-  /*
-  const file = await getLatestFile(folder.id);
-  if(!file.id) {
-    console.log2('구글 드라이브 폴더에서 파일을 읽을 수 없습니다. :(', folder);
-    //todo: 폴더를 수동으로 고르게 해주자??
+  const [id, createdTime] = await getLatestFile();
+  OUTPUT.style.removeProperty('background-image');
+  if(!id) {
+    console.log2('구글 드라이브 폴더에서 파일을 읽을 수 없습니다. :(');
     return;
   }
-  */
+  META.innerText = new Date(createdTime).toLocaleString() + ' 백업 파일 기준';
 
   //load it
-  file = {id: '1AeLjyBb6pExwYcvVRsIRz8gC7l7FrqxZ'};  //dev
-  const fileContent = getContent(file.id);  //text of body
-  const buf = buffer.Buffer.from(resp, "hex").buffer;  //ArrayBuffer (noy Uint8Array)
+  const fileContent = await getContent(id);  //text of body
+  const buf = buffer.Buffer.from(fileContent, "hex").buffer;  //ArrayBuffer (noy Uint8Array)
 
   //load sql
   const db = new SQL.Database(buf);
@@ -57,16 +47,18 @@ async function run(e) {
   const content = db.exec(QUERY);
   console.log(content);
 
-  //
+  
 }
 
-
-async function getFolder() {
-  return;
-}
-
-async function getLatestFile(folder) {
-  return;
+async function getLatestFile() {
+  const resp = await gapi.client.drive.files.list({
+    pageSize: 10,
+    orderBy: ['createdTime desc'],
+    q: `name contains 'Cherrypicker' and mimeType = 'application/x-sqlite3'`,
+    fields: 'files(id, name, createdTime, size)',
+  });
+  const files = resp.result.files;
+  return [files[0]?.id, files[0]?.createdTime];
 }
 
 async function getContent(id) {
