@@ -12,7 +12,7 @@ console.log2 = (...args) => {
 
 //load sql.js
 //const initSqlJs = window.initSqlJs;
-const SQL = initSqlJs({
+const SQL = await initSqlJs({
   //locateFile: file => `https://sql.js.org/dist/${file}`
   locateFile: file => `dist/${file}`
 });
@@ -46,13 +46,15 @@ async function run(e) {
 
   //load it
   file = {id: '1AeLjyBb6pExwYcvVRsIRz8gC7l7FrqxZ'};  //dev
-  const url = getUrl(file.id);
-  //url = 'https://github.com/lerocha/chinook-database/raw/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite';  //dev
-  console.log(id);
-  const db = loadSql(url);
+  const fileContent = getContent(file.id);  //text of body
+  const buf = buffer.Buffer.from(resp, "hex").buffer;  //ArrayBuffer (noy Uint8Array)
+
+  //load sql
+  const db = new SQL.Database(buf);
 
   //query it
-  const content = db.exec("SELECT * FROM my_table");
+  const QUERY = `SELECT cname,cno,ymd,time,paid,balance,store FROM 'TABLE_RECEIPT' WHERE cname = '하나' AND cno = '187-******-09107' ORDER BY ymd DESC`;
+  const content = db.exec(QUERY);
   console.log(content);
 
   //
@@ -67,25 +69,12 @@ async function getLatestFile(folder) {
   return;
 }
 
-async function getUrl(id) {
-  //https://stackoverflow.com/a/39408884/6153990
-  gapi.client.drive.files.get({
+async function getContent(id) {
+  const resp = await gapi.client.drive.files.get({
     fileId: id,
-    fields: 'webContentLink'
-  }).then(function(success){
-      const webContentLink = success.result.webContentLink; //the link is in the success.result object
-      return webContentLink;
-  }, function(fail){
-      console.log(fail);
-      console.log('Error: ', fail.result.error.message);
-  })
-}
-
-async function loadSql(url) {
-  const dataPromise = fetch(url).then(res => res.arrayBuffer());
-  const buf = await Promise(dataPromise)
-  const db = new SQL.Database(new Uint8Array(buf));
-  return db;
+    alt: 'media',
+  });
+  return resp.body;
 }
 
 
