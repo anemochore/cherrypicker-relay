@@ -46,8 +46,9 @@ async function run(e) {
 
   //load it
   file = {id: '1AeLjyBb6pExwYcvVRsIRz8gC7l7FrqxZ'};  //dev
-  //const url = getUrl(file.id);
-  url = 'https://github.com/lerocha/chinook-database/raw/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite';  //dev
+  const url = getUrl(file.id);
+  //url = 'https://github.com/lerocha/chinook-database/raw/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite';  //dev
+  console.log(id);
   const db = loadSql(url);
 
   //query it
