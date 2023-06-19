@@ -28,7 +28,7 @@ async function run(e) {
   //query it
   const header = ['cname', 'cno', 'ymd', 'time', 'paid', 'balance', 'store'];
   const where = `cname = '하나' AND cno = '187-******-09107'`  //hard-coded
-  const QUERY = `SELECT ${header.join(',')} FROM 'TABLE_RECEIPT' WHERE ${where} ORDER BY ymd DESC`;
+  const QUERY = `SELECT ${header.join(',')} FROM 'TABLE_RECEIPT' WHERE ${where} ORDER BY cdate DESC`;
   const content = db.exec(QUERY);
   //console.log(content);
 
@@ -60,7 +60,8 @@ async function getLatestFile() {
     pageSize: 10,
     orderBy: ['createdTime desc'],
     q: `name contains 'Cherrypicker' and mimeType = 'application/x-sqlite3'`,
-    fields: 'files(id, name, createdTime, size)',
+    //fields: 'files(id, name, createdTime, size)',
+    fields: 'files(id, createdTime)',
   });
   const files = resp.result.files;
   return [files[0]?.id, files[0]?.createdTime];
