@@ -42,7 +42,7 @@ async function run(e) {
     balance: numberWithCommas,
   };
   const replaceHeader = {
-    cname: '카드/계좌',
+    cname: '은행',
     cno: '계좌번호',
     ymd: '날짜',
     time: '시간',
