@@ -27,7 +27,10 @@ async function run(e) {
 
   //query it
   const header = ['cname', 'cno', 'ymd', 'time', 'paid', 'balance', 'store'];
-  const where = `cname = '하나' AND cno = '187-******-09107'`  //hard-coded
+  const where = [
+    `cname = '하나' AND cno = '187-******-09107'`,
+    `cname = '하나카드' AND cno = '4*3*'`,
+  ].join(' OR ').replace(/ OR $/, '');
   const QUERY = `SELECT ${header.join(',')} FROM 'TABLE_RECEIPT' WHERE ${where} ORDER BY _id DESC`;
   const content = db.exec(QUERY);
   //console.log(content);
