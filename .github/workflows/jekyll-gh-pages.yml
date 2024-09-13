@@ -32,8 +32,8 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Setup env
-        run: echo "API_KEY = `${{secrets.API_KEY}}`;" > secrets.env &&
-             echo "CLIENT_ID = `${{secrets.CLIENT_ID}}`;" >> secrets.env
+        run: echo "API_KEY = '${{secrets.API_KEY}}';" > secrets.env &&
+             echo "CLIENT_ID = '${{secrets.CLIENT_ID}}';" >> secrets.env
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
