@@ -121,7 +121,7 @@ function numberWithCommas(x) {
 
 
 //get CLIENT_ID & API_KEY
-eval(await fetch('./secrets.env'));  //how awkard...
+eval(await(await fetch('./secrets.env')).text());  //how awkard...
 
 //gapi boilerplates
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
