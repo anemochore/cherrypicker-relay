@@ -120,15 +120,9 @@ function numberWithCommas(x) {
 }
 
 
-//get CLIENT_ID & API_KEY (stored in github repo secrets). how awkard...
-var API_KEY   = await getTrimTxt("./API_KEY.env");
-var CLIENT_ID = await getTrimTxt("./CLIENT_ID.env");
+//stored in github repo secrets
+let API_KEY, CLIENT_ID;
 
-async function getTrimTxt(url) {
-  const res = await fetch(url);
-  const txt = await res.text();
-  return txt.trim();
-}
 
 //gapi boilerplates
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
@@ -141,11 +135,19 @@ let gisInited = false;
 document.getElementById('authorize_button').style.visibility = 'hidden';
 document.getElementById('signout_button').style.visibility = 'hidden';
 
+async function getTrimTxt(url) {
+  const res = await fetch(url);
+  const txt = await res.text();
+  return txt.trim();
+}
 
 /**
  * Callback after api.js is loaded.
  */
-function gapiLoaded() {
+async function gapiLoaded() {
+  API_KEY   = await getTrimTxt("./API_KEY.env");
+  CLIENT_ID = await getTrimTxt("./CLIENT_ID.env");
+
   gapi.load('client', initializeGapiClient);
 }
 
