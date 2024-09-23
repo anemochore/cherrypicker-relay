@@ -120,19 +120,9 @@ function numberWithCommas(x) {
 }
 
 
-//get CLIENT_ID & API_KEY (stored in github repo secrets). how awkard...
-//await is not defined...?
-let API_KEY, CLIENT_ID;
-getTrimTxt("./API_KEY.env").then(txt => API_KEY = txt);
-getTrimTxt("./CLIENT_ID.env").then(txt => CLIENT_ID = txt);
-
-async function getTrimTxt(url) {
-  const res = await fetch(url);
-  const txt = await res.text();
-  return txt.trim();
-}
-
 //gapi boilerplates
+const CLIENT_ID = '484499455751-m0ck74mc8lkiffj3t6o7p7sk08jerlsk.apps.googleusercontent.com';
+const API_KEY = 'AIzaSyAwh4ElKmAhfmTBmdimD9vPAuGws6chirg';
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
 const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
 
