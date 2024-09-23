@@ -121,8 +121,14 @@ function numberWithCommas(x) {
 
 
 //get CLIENT_ID & API_KEY (stored in github repo secrets). how awkard...
-var API_KEY   = (await (fetch("./API_KEY.env").then(res => res.text()))).trim();
-var CLIENT_ID = (await (fetch("./CLIENT_ID.env").then(res => res.text()))).trim();
+var API_KEY   = await getTrimTxt("./API_KEY.env");
+var CLIENT_ID = await getTrimTxt("./CLIENT_ID.env");
+
+async function getTrimTxt(url) {
+  const res = await fetch(url);
+  const txt = await res.text();
+  return txt.trim();
+}
 
 //gapi boilerplates
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
